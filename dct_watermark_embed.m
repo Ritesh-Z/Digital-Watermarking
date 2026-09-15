@@ -2,13 +2,17 @@ function watermarked = dct_watermark_embed(coverImage, watermarkBits, alpha)
 % DCT_WATERMARK_EMBED  Embeds a binary watermark into a grayscale image
 % using block-based DCT coefficient comparison.
 %
+% NOTE: Uses a hand-written DCT (manual_dct_matrix below) instead of the
+% Image Processing Toolbox's dct2/idct2, so this works on ANY MATLAB
+% install, no toolbox required.
+%
 %   watermarked = dct_watermark_embed(coverImage, watermarkBits, alpha)
 %
 %   coverImage    : grayscale image (uint8), dimensions must be
 %                   divisible by 8 in both directions
 %   watermarkBits : 1xN vector of bits (0/1) to embed, one bit per 8x8 block
 %   alpha         : embedding strength (higher = more robust, more visible)
-%                   typical values: 3 to 15
+%                   typical values: 3 to 50
 %
 %   watermarked   : uint8 watermarked image, same size as coverImage
 
@@ -17,10 +21,10 @@ function watermarked = dct_watermark_embed(coverImage, watermarkBits, alpha)
     blockSize = 8;
 
     % Mid-frequency coefficient pair used to encode each bit.
-    % These positions avoid low frequencies (visible distortion) and
-    % high frequencies (destroyed easily by compression/noise).
     pos1 = [4, 3];
     pos2 = [3, 4];
+
+    T = manual_dct_matrix(blockSize);  % build once, reuse for every block
 
     watermarked = coverImage;
     numBits = length(watermarkBits);
@@ -33,15 +37,12 @@ function watermarked = dct_watermark_embed(coverImage, watermarkBits, alpha)
             end
 
             block = coverImage(i:i+blockSize-1, j:j+blockSize-1);
-            D = dct2(block);
+            D = T * block * T';   % manual DCT2
 
             bit = watermarkBits(idx);
             c1 = D(pos1(1), pos1(2));
             c2 = D(pos2(1), pos2(2));
 
-            % Force the required relationship between c1 and c2 with a
-            % safety margin of 'alpha', while disturbing the coefficients
-            % as little as possible (split the correction symmetrically).
             if bit == 1
                 if (c1 - c2) < alpha
                     delta = (alpha - (c1 - c2)) / 2;
@@ -59,7 +60,7 @@ function watermarked = dct_watermark_embed(coverImage, watermarkBits, alpha)
             D(pos1(1), pos1(2)) = c1;
             D(pos2(1), pos2(2)) = c2;
 
-            watermarked(i:i+blockSize-1, j:j+blockSize-1) = idct2(D);
+            watermarked(i:i+blockSize-1, j:j+blockSize-1) = T' * D * T;  % manual IDCT2
             idx = idx + 1;
         end
         if idx > numBits
@@ -67,5 +68,23 @@ function watermarked = dct_watermark_embed(coverImage, watermarkBits, alpha)
         end
     end
 
-    watermarked = uint8(watermarked);
+    watermarked = uint8(min(max(watermarked, 0), 255));
+end
+
+function T = manual_dct_matrix(N)
+% Builds the NxN DCT-II basis matrix by hand (same formula the
+% Image Processing Toolbox's dct2 uses internally), so D = T*block*T'
+% and block = T'*D*T give identical results to dct2/idct2 without
+% needing the toolbox.
+    T = zeros(N);
+    for u = 0:N-1
+        if u == 0
+            a = sqrt(1/N);
+        else
+            a = sqrt(2/N);
+        end
+        for x = 0:N-1
+            T(u+1, x+1) = a * cos(pi*(2*x+1)*u/(2*N));
+        end
+    end
 end
