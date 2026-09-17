@@ -5,11 +5,10 @@
 % Pipeline: Load cover image -> Generate/load watermark -> Embed ->
 %           Extract -> Evaluate (PSNR, NC, BER) -> Robustness tests
 %
-% NOTE: This version needs NO Image Processing Toolbox. Every function
-% that toolbox would normally provide (dct2/idct2, rgb2gray, imresize,
-% imnoise, medfilt2, psnr, imbinarize) has been hand-written below using
-% only base MATLAB. Only imread/imwrite/figure/imshow are used from
-% outside base MATLAB, and those ship with MATLAB itself, not the toolbox.
+% NOTE: This version needs NO Image Processing Toolbox. All helper
+% functions (manual_rgb2gray, manual_imresize, manual_imnoise_gaussian,
+% manual_imnoise_saltpepper, manual_medfilt2, insertTextSafe) live in
+% their own .m files in this same folder - make sure they're all present.
 
 clc; clear; close all;
 
@@ -116,80 +115,3 @@ subplot(2,3,3), imshow(reshape(bitsJPEG, wmRows, wmCols)), title('After JPEG');
 subplot(2,3,4), imshow(reshape(bitsNoise, wmRows, wmCols)), title('After Gaussian Noise');
 subplot(2,3,5), imshow(reshape(bitsSP, wmRows, wmCols)), title('After Salt & Pepper');
 subplot(2,3,6), imshow(reshape(bitsMedian, wmRows, wmCols)), title('After Median Filter');
-
-%% ===================== Toolbox-free helper functions =====================
-
-function gray = manual_rgb2gray(rgbImg)
-% Standard luminance formula, same weights rgb2gray uses internally.
-    rgbImg = double(rgbImg);
-    gray = uint8(0.2989*rgbImg(:,:,1) + 0.5870*rgbImg(:,:,2) + 0.1140*rgbImg(:,:,3));
-end
-
-function out = manual_imresize(img, outSize)
-% Nearest-neighbor resize - simple, robust, no toolbox needed.
-% Works for 2D grayscale/logical images.
-    img = double(img);
-    [inRows, inCols] = size(img);
-    outRows = outSize(1); outCols = outSize(2);
-    rIdx = round(linspace(1, inRows, outRows));
-    cIdx = round(linspace(1, inCols, outCols));
-    rIdx(rIdx < 1) = 1; cIdx(cIdx < 1) = 1;
-    out = img(rIdx, cIdx);
-end
-
-function out = manual_imnoise_gaussian(img, variance)
-% Adds zero-mean Gaussian noise, image treated on a [0,1] scale
-% (matching imnoise's convention) then converted back to uint8.
-    imgD = double(img) / 255;
-    noise = sqrt(variance) * randn(size(imgD));
-    noisy = min(max(imgD + noise, 0), 1);
-    out = uint8(noisy * 255);
-end
-
-function out = manual_imnoise_saltpepper(img, density)
-% Randomly sets a fraction 'density' of pixels to 0 or 255.
-    imgD = double(img);
-    mask = rand(size(imgD));
-    imgD(mask < density/2) = 0;
-    imgD(mask >= density/2 & mask < density) = 255;
-    out = uint8(imgD);
-end
-
-function out = manual_medfilt2(img, winSize)
-% Simple sliding-window median filter with replicate-edge padding.
-    imgD = double(img);
-    [rows, cols] = size(imgD);
-    pad = floor(winSize/2);
-
-    padded = zeros(rows+2*pad, cols+2*pad);
-    padded(pad+1:pad+rows, pad+1:pad+cols) = imgD;
-    padded(1:pad, pad+1:pad+cols) = repmat(imgD(1,:), pad, 1);
-    padded(pad+rows+1:end, pad+1:pad+cols) = repmat(imgD(end,:), pad, 1);
-    padded(:, 1:pad) = repmat(padded(:, pad+1), 1, pad);
-    padded(:, pad+cols+1:end) = repmat(padded(:, pad+cols), 1, pad);
-
-    out = zeros(rows, cols);
-    for r = 1:rows
-        for c = 1:cols
-            window = padded(r:r+winSize-1, c:c+winSize-1);
-            out(r,c) = median(window(:));
-        end
-    end
-    out = uint8(out);
-end
-
-function img = insertTextSafe(img, txt)
-% Draws simple block text into a small binary canvas using only core
-% graphics functions (figure/text/getframe), no toolbox needed.
-    fig = figure('Visible', 'off', 'Color', 'k', ...
-                 'Units', 'pixels', 'Position', [0 0 size(img,2) size(img,1)]);
-    ax = axes('Parent', fig, 'Position', [0 0 1 1], 'Color', 'k');
-    text(ax, 0.5, 0.5, txt, 'Color', 'w', 'FontSize', size(img,1)*0.5, ...
-         'FontWeight', 'bold', 'HorizontalAlignment', 'center', ...
-         'VerticalAlignment', 'middle');
-    axis(ax, 'off');
-    frame = getframe(ax);
-    close(fig);
-    gray = manual_rgb2gray(frame.cdata);
-    img = double(manual_imresize(gray, [size(img,1), size(img,2)]) > 128);
-end
