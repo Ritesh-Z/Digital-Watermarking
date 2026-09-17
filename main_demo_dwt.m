@@ -44,10 +44,10 @@ figure, imshow(cover), title('Original Cover Image');
 % Each sub-band is 128x128 (half the size of the 256x256 cover)
 
 figure;
-subplot(2,2,1), imshow(mat2gray(LL)), title('LL (Approximation)');
-subplot(2,2,2), imshow(mat2gray(LH)), title('LH (Horizontal Detail)');
-subplot(2,2,3), imshow(mat2gray(HL)), title('HL (Vertical Detail) - used for embedding');
-subplot(2,2,4), imshow(mat2gray(HH)), title('HH (Diagonal Detail)');
+subplot(2,2,1), imshow(manual_mat2gray(LL)), title('LL (Approximation)');
+subplot(2,2,2), imshow(manual_mat2gray(LH)), title('LH (Horizontal Detail)');
+subplot(2,2,3), imshow(manual_mat2gray(HL)), title('HL (Vertical Detail) - used for embedding');
+subplot(2,2,4), imshow(manual_mat2gray(HH)), title('HH (Diagonal Detail)');
 sgtitle('Haar DWT Decomposition of Cover Image');
 
 %% 3. Generate / load the watermark

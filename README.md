@@ -33,10 +33,14 @@ A zero-dependency MATLAB implementation of invisible digital image watermarking 
 | :--- | :--- |
 | [`main_demo.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/main_demo.m) | Main demo script for DCT-based watermarking (Embedding, Blind Extraction, Evaluation, Attacks). |
 | [`main_demo_dwt.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/main_demo_dwt.m) | Main demo script for DWT-based watermarking (Sub-band decomposition, QIM Embedding, Extraction, Evaluation, Attacks). |
+| [`dct_watermark_embed.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/dct_watermark_embed.m) | Embeds binary watermark into mid-frequency 2D DCT coefficients. |
+| [`dct_watermark_extract.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/dct_watermark_extract.m) | Extracts binary watermark blindly from 2D DCT coefficients. |
 | [`dwt_watermark_embed.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/dwt_watermark_embed.m) | Embeds binary watermark into the HL sub-band of a DWT-decomposed image. |
 | [`dwt_watermark_extract.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/dwt_watermark_extract.m) | Extracts binary watermark from the HL sub-band. |
+| [`calculate_metrics.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/calculate_metrics.m) | Computes evaluation metrics (PSNR, NC, BER) without toolbox dependencies. |
 | [`manual_dwt2_haar.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/manual_dwt2_haar.m) | Toolbox-free single-level 2D Haar DWT implementation. |
 | [`manual_idwt2_haar.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/manual_idwt2_haar.m) | Toolbox-free single-level 2D Haar Inverse DWT implementation. |
+| [`manual_mat2gray.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/manual_mat2gray.m) | Rescales intensity matrix values to [0, 1] range for visualization without toolboxes. |
 | [`manual_rgb2gray.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/manual_rgb2gray.m) | Converts RGB image to grayscale using luminance weighting. |
 | [`manual_imresize.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/manual_imresize.m) | Nearest-neighbor image resize without toolboxes. |
 | [`manual_imnoise_gaussian.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/manual_imnoise_gaussian.m) | Zero-mean Gaussian noise generator. |
