@@ -77,7 +77,7 @@ A zero-dependency MATLAB implementation of invisible digital image watermarking 
    ```
 2. Run DCT Watermarking Demo:
    ```matlab
-   main_demo
+   main_demo_dct
    ```
 3. Run DWT Watermarking Demo:
    ```matlab
