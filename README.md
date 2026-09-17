@@ -31,7 +31,7 @@ A zero-dependency MATLAB implementation of invisible digital image watermarking 
 
 | File | Description |
 | :--- | :--- |
-| [`main_demo.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/main_demo.m) | Main demo script for DCT-based watermarking (Embedding, Blind Extraction, Evaluation, Attacks). |
+| [`main_demo_dct.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/main_demo.m) | Main demo script for DCT-based watermarking (Embedding, Blind Extraction, Evaluation, Attacks). |
 | [`main_demo_dwt.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/main_demo_dwt.m) | Main demo script for DWT-based watermarking (Sub-band decomposition, QIM Embedding, Extraction, Evaluation, Attacks). |
 | [`dct_watermark_embed.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/dct_watermark_embed.m) | Embeds binary watermark into mid-frequency 2D DCT coefficients. |
 | [`dct_watermark_extract.m`](file:///c:/Users/Ritesh/Documents/Digital_Watermarking/dct_watermark_extract.m) | Extracts binary watermark blindly from 2D DCT coefficients. |
