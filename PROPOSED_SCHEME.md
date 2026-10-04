@@ -4,8 +4,8 @@ A detailed write-up of the project's proposed watermarking scheme: what it is, w
 it evolved, how it was tested, and how it compares with the classic schemes and the base paper.
 
 - **Python implementation:** `python/wmark/schemes.py` → `HybridQIMScheme` (tested, 41 automated tests)
-- **MATLAB implementation:** `proposed_watermark_embed.m` / `proposed_watermark_extract.m`
-  (toolbox-free port of the Python code; see "MATLAB notes" below)
+- **MATLAB implementation:** `proposed_watermark_embed.m` / `proposed_watermark_extract.m` on branch
+  `matlab-proposed` (toolbox-free port, verified in MATLAB Online R2026a; see "MATLAB notes" below)
 - **Base paper:** A. Loke, R. K. Swami, U. Kulkarni, *"Hybrid Digital Watermarking Using DWT, DCT and
   SVD for Robust Image Protection"*, International Journal of Environmental Sciences, 2025.
 
@@ -283,8 +283,10 @@ python server.py          # http://127.0.0.1:8000
 **MATLAB notes.** The MATLAB files are a line-by-line port of the tested Python code. MATLAB and NumPy
 use different random generators, so a given key places bits at different positions in the two
 languages. Each language extracts its own watermarks, but a MATLAB-embedded image must be read back
-with the MATLAB extractor (and vice versa). The MATLAB port was written without access to MATLAB, so
-run `main_demo_proposed` once to confirm it on your installation.
+with the MATLAB extractor (and vice versa). The MATLAB port (branch `matlab-proposed`) was verified in
+MATLAB Online R2026a: PSNR 41.94 dB, NC 1.000 with no attack, mean NC 0.9982 over the 11 attacks
+(rotation re-synced at 2.00°), and in `main_security_test` classic SVD's fake-claim score was 0.996
+against −0.031 for the proposed scheme.
 
 ---
 
