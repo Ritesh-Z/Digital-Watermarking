@@ -254,6 +254,10 @@ class HybridQIMScheme(BitScheme):
     def slots(self, shape):
         return (shape[0] // 8) * (shape[1] // 8)
 
+    def copies(self, shape, wm_shape=(32, 32), redundant=True):
+        """Copies of each bit across all three carriers (DC + low pair + mid pair)."""
+        return 3 * super().copies(shape, wm_shape, redundant)
+
     PAIR_RATIO = 0.8           # carrier 2 QIM step = PAIR_RATIO * alpha
     DC_LAMBDA = 0.85           # distortion-compensated QIM factor for the DC carrier
     P1, P2 = (2, 1), (1, 2)    # carrier 2: low pair, QIM on D(3,2)-D(2,3) (MATLAB 1-based)

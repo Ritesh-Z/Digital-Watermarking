@@ -1,6 +1,6 @@
-import { createHero } from "./hero.js?v=13";
-import { createBars, scoreColor } from "./bars3d.js?v=13";
-import { sweepChart } from "./charts.js?v=13";
+import { createHero } from "./hero.js?v=14";
+import { createBars, scoreColor } from "./bars3d.js?v=14";
+import { sweepChart } from "./charts.js?v=14";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -104,6 +104,8 @@ document.addEventListener("click", (e) => { if (e.target.id === "glossary") clos
 
 function countUp(el, to, digits) {
   if (to === null || !Number.isFinite(to)) { el.textContent = "∞"; return; }
+  // background tabs pause requestAnimationFrame: write the final value directly
+  if (document.hidden) { el.textContent = to.toFixed(digits); return; }
   const from = parseFloat(el.textContent) || 0, t0 = performance.now();
   const step = (t) => {
     const k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3);
