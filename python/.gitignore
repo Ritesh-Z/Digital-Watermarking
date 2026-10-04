@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+outputs/
+web/vendor/
+.venv/
+venv/

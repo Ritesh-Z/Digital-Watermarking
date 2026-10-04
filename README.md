@@ -119,6 +119,23 @@ All scripts automatically generate output figures and print performance metrics 
 
 ---
 
+## 🐍 Python Edition & 3-D Web Lab
+
+The [`python/`](python/) folder contains a free, local Python port of this project with an
+interactive **Three.js web interface**. It adds a reproduction of the base paper's hybrid
+DWT-DCT-SVD scheme, an improved blind hybrid scheme, 11 attacks, a false-positive security
+test, α-sweeps, video watermarking and report-ready figures. See [`python/README.md`](python/README.md),
+and [`PROPOSED_SCHEME.md`](PROPOSED_SCHEME.md) for the full write-up of the proposed scheme and its experiments.
+
+```bash
+cd python
+pip install -r requirements.txt
+python server.py
+```
+
+---
+
 ## 📜 License
+
 
 This project is licensed under the MIT License.

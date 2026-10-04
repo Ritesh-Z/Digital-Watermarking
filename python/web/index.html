@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spectral Watermark Lab</title>
+  <meta name="description" content="Toolbox-free DCT, DWT, SVD and hybrid image watermarking - interactive 3-D lab">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230b0b0c'/><circle cx='16' cy='16' r='7' fill='%23e8553a'/><circle cx='16' cy='16' r='11' fill='none' stroke='%23f4c7b8' stroke-width='1.5'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=16">
+  <script type="importmap">
+    { "imports": {
+        "three": "/vendor/build/three.module.js",
+        "three/addons/": "/vendor/examples/jsm/"
+    } }
+  </script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <defs><linearGradient id="gGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4c7b8"/><stop offset="1" stop-color="#e8553a"/>
+    </linearGradient></defs>
+  </svg>
+  <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <nav class="nav">
+    <a class="brand" href="#top">Spectral&nbsp;Lab</a>
+    <a class="link" href="#studio">Studio</a>
+    <a class="link" href="#attacks">Attacks</a>
+    <a class="link" href="#benchmark">Benchmark</a>
+    <a class="link" href="#sweep">Sweep</a>
+    <a class="link" href="#security">Security</a>
+    <a class="link" href="#learn">How&nbsp;it&nbsp;works</a>
+    <a class="link" href="#findings">Findings</a>
+    <a class="link" href="#experiments">Results</a>
+    <a class="link" href="#theory">Why&nbsp;better</a>
+    <a class="link" href="#journey">Journey</a>
+    <button class="link gl-btn" type="button" onclick="document.dispatchEvent(new CustomEvent('glossary'))">Glossary&nbsp;?</button>
+    <span class="status" id="status"><i></i><span>connecting…</span></span>
+  </nav>
+
+  <!-- ============================================================ HERO -->
+  <section class="page hero" id="top">
+    <div class="poster">
+      <canvas id="hero-canvas"></canvas>
+      <p class="whisper">will your watermark survive?</p>
+
+      <svg class="orbit-text" viewBox="0 0 200 200" aria-hidden="true">
+        <defs><path id="circ" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+        <text><textPath href="#circ" textLength="486" lengthAdjust="spacing">EVERY PIXEL PROVABLE · INVISIBLE · ROBUST · </textPath></text>
+      </svg>
+
+      <div class="hero-side">
+        <div class="hero-modes" id="hero-modes">
+          <button data-mode="photo">01 Photo</button>
+          <button data-mode="terrain" class="on">02 Terrain</button>
+          <button data-mode="energy">03 Energy</button>
+        </div>
+        <aside class="hero-explain" id="hero-explain">
+          <div class="ex-head"><span>what am I looking at?</span><span id="ex-count">002 / 003</span></div>
+          <b id="ex-title">Terrain: brightness as height</b>
+          <p id="ex-text"></p>
+          <div class="ex-legend" id="ex-legend"></div>
+        </aside>
+        <div class="hero-stats">
+          <div><b>5</b><span>schemes</span></div>
+          <div><b>11</b><span>attacks</span></div>
+          <div><b id="hero-psnr">–</b><span>dB psnr</span></div>
+        </div>
+      </div>
+
+      <div class="band">
+        <h1>INVISIBLE &amp; UNBREAKABLE</h1>
+        <div class="band-foot">
+          <p>A secret ownership mark, written into the frequency spectrum of an image. It survives
+            compression, noise, filtering and rotation, and proves the picture is yours.</p>
+          <div class="cta">
+            <a class="btn primary" href="#studio">Open studio</a>
+            <a class="btn ghost" href="#benchmark">Compare</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ STUDIO -->
+  <section class="page block reveal" id="studio">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">001</span><h2>Studio</h2><span class="sub">embed · extract · measure</span></div>
+        <p class="hint"><b>PSNR / SSIM</b>: invisibility (above 40 dB can't be seen) · <b>NC / BER</b>: logo recovery (1.000 / 0.000 = perfect) · drag the line on the photo to compare</p>
+      </header>
+      <div class="studio">
+        <aside class="controls">
+          <div>
+            <div class="ctl-label">Inputs</div>
+            <div class="drops">
+              <label class="drop" id="drop-cover"><input type="file" accept="image/*"><span>Cover<br><small>drop / click</small></span><span class="tag">COVER</span><button class="x" type="button" title="Use default">✕</button></label>
+              <label class="drop" id="drop-logo"><input type="file" accept="image/*"><span>Logo<br><small>drop / click</small></span><span class="tag">LOGO</span><button class="x" type="button" title="Use default">✕</button></label>
+            </div>
+          </div>
+          <div>
+            <div class="ctl-label">Scheme</div>
+            <div class="schemes" id="schemes"></div>
+          </div>
+          <div>
+            <div class="ctl-label"><span>Strength α</span><span class="alpha-val" id="alpha-val">–</span></div>
+            <input type="range" id="alpha">
+            <div class="range-hint"><span>← invisible</span><span>robust →</span></div>
+          </div>
+          <details class="adv">
+            <summary>Advanced</summary>
+            <div class="adv-grid">
+              <div><div class="ctl-label">Image size</div><div class="seg" id="seg-size"><button data-v="256">256</button><button data-v="512" class="on">512</button><button data-v="1024">1024</button></div></div>
+              <div><div class="ctl-label">Host channel</div><div class="seg" id="seg-channel"><button data-v="Y" class="on">Y</button><button data-v="gray">Gray</button><button data-v="R">R</button><button data-v="G">G</button><button data-v="B">B</button></div></div>
+              <div id="band-wrap"><div class="ctl-label">Paper hybrid band</div><div class="seg" id="seg-band"><button data-v="LH">LH</button><button data-v="HL">HL</button><button data-v="HH" class="on">HH</button></div></div>
+              <div><div class="ctl-label">Secret key</div><div class="row"><input class="field" id="key" value="2025" placeholder="empty = MATLAB layout"><button class="icon-btn" id="dice" title="Random key" type="button">⟳</button></div></div>
+              <label class="toggle"><span>Keyed redundancy</span><input type="checkbox" id="redundant" checked><span class="sw"></span></label>
+              <label class="toggle"><span>Blind re-sync (rotation)</span><input type="checkbox" id="resync" checked><span class="sw"></span></label>
+            </div>
+          </details>
+          <button class="btn primary run-btn" id="run"><span class="spin"></span>Run pipeline</button>
+        </aside>
+
+        <div class="results" id="results">
+          <div class="gauges">
+            <div class="gauge skeleton" id="g-psnr"><svg viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="bar" cx="32" cy="32" r="27"/></svg><div><span>PSNR</span><b>–</b><em>dB · invisibility</em></div></div>
+            <div class="gauge skeleton" id="g-ssim"><svg viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="bar" cx="32" cy="32" r="27"/></svg><div><span>SSIM</span><b>–</b><em>structural similarity</em></div></div>
+            <div class="gauge skeleton" id="g-nc"><svg viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="bar" cx="32" cy="32" r="27"/></svg><div><span>NC</span><b>–</b><em>normalised correlation</em></div></div>
+            <div class="gauge skeleton" id="g-ber"><svg viewBox="0 0 64 64"><circle class="track" cx="32" cy="32" r="27"/><circle class="bar" cx="32" cy="32" r="27"/></svg><div><span>BER</span><b>–</b><em>bit error rate</em></div></div>
+          </div>
+          <div class="viewer">
+            <div class="compare skeleton" id="compare">
+              <img id="img-cover" alt="Cover image">
+              <img id="img-marked" class="top" alt="Watermarked image">
+              <div class="handle"></div>
+              <span class="lbl l">ORIGINAL</span><span class="lbl r">WATERMARKED</span>
+            </div>
+            <div class="quad">
+              <div class="tile skeleton"><img id="img-diff" alt="Amplified difference"><span class="cap">what changed <b id="diff-gain">×–</b></span></div>
+              <div class="tile skeleton"><img id="img-wm" alt="Original watermark"><span class="cap">logo hidden</span></div>
+              <div class="tile skeleton"><img id="img-ext" alt="Extracted watermark"><span class="cap">logo recovered <b id="wm-shape"></b></span></div>
+              <div class="tile bands" id="bands">
+                <img alt="LL"><img alt="LH"><img alt="HL"><img alt="HH">
+                <span class="cap">wavelet bands LL·LH·HL·HH</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-line" id="info-line"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ ATTACKS -->
+  <section class="page block reveal" id="attacks">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">002</span><h2>Attack arena</h2><span class="sub">can the mark survive?</span></div>
+        <p class="hint"><b>Left</b>: the damaged image · <b>Right</b>: the logo read back from it · <b>Bar</b>: how much survived (full = perfect) · tag = where the attack comes from</p>
+      </header>
+      <div class="attack-grid" id="attack-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ BENCHMARK -->
+  <section class="page block reveal" id="benchmark">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">003</span><h2>Benchmark</h2><span class="sub">every scheme × every attack</span></div>
+        <p class="hint"><b>Row</b> = scheme · <b>column</b> = attack · <b>tall blue bar</b> = survived, <b>short coral bar</b> = destroyed · hover for the score · 👑 = best average</p>
+        <button class="btn primary" id="run-bench"><span class="spin"></span>Run benchmark</button>
+      </header>
+      <div class="bench">
+        <div class="bench-stage">
+          <canvas id="bench-canvas"></canvas>
+          <div class="bench-empty" id="bench-empty"><div>Loading the benchmark…<br><small>runs automatically · drag to orbit</small></div></div>
+          <div class="legend-bar"><span>destroyed 0</span><i></i><span>1 survived</span></div>
+        </div>
+        <div class="table-wrap"><table id="bench-table"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ SWEEP -->
+  <section class="page block reveal" id="sweep">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">004</span><h2>α-sweep</h2><span class="sub">invisible or robust?</span></div>
+        <p class="hint"><b>Dashed</b> = image quality (PSNR, right axis), falls as α grows · <b>coloured</b> = survival per attack (left axis), rises · pick α where colours are high and PSNR is still above ~38 dB</p>
+      </header>
+      <div class="sweep">
+        <div class="sweep-bar">
+          <select class="field" id="sweep-scheme"></select>
+          <button class="btn primary" id="run-sweep"><span class="spin"></span>Run sweep</button>
+          <small class="dim">12 strengths × 8 attacks · 20–40 s</small>
+          <div class="legend" id="sweep-legend"></div>
+        </div>
+        <div class="sweep-chart" id="sweep-chart"><div class="empty">Loading the sweep for the proposed scheme…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ SECURITY -->
+  <section class="page block reveal" id="security">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">005</span><h2>Security lab</h2><span class="sub">can someone fake ownership?</span></div>
+        <p class="hint"><b>Genuine</b> should be ≈ 1 · <b>Decoy</b> (owner's key on a never-marked image) and <b>Fake claim</b> (attacker's "FAKE" logo + key on the owner's image) should be ≈ 0. If not, anyone could claim the image.</p>
+        <button class="btn primary" id="run-sec"><span class="spin"></span>Run test</button>
+      </header>
+      <div class="sec-grid" id="sec-grid"><div class="empty">Checking all five schemes…</div></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ LEARN -->
+  <section class="page block reveal" id="learn">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">006</span><h2>How it works</h2><span class="sub">five schemes, one engine</span></div>
+        <p class="hint">Each column is one scheme: <b>in plain words</b> first, then the <b>steps in order</b> and the technical detail. Click any tag (like <b>blind</b>) or <b>Glossary ?</b> for an explanation. All transforms are hand-written in NumPy (port of the toolbox-free MATLAB code, which stays the reference).</p>
+      </header>
+      <div class="learn" id="learn-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ FINDINGS -->
+  <section class="page block reveal" id="findings">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">007</span><h2>Key findings</h2><span class="sub">what this project adds</span></div>
+        <p class="hint">Measured on the 512×512 cover with your logo. <b>01</b> is a weakness of SVD and the base paper; <b>02–06</b> are the
+          improvements built into the proposed scheme. The first and fourth numbers update live from this page's own results.</p>
+      </header>
+      <div class="findings-grid" id="findings-grid"></div>
+    </div>
+  </section>
+
+  <!-- glossary: every technical term explained in plain words -->
+  <div class="glossary" id="glossary" hidden>
+    <div class="gl-panel">
+      <header><h2>Glossary</h2><span>every term on this site, in plain words</span>
+        <button type="button" class="gl-close" aria-label="Close" onclick="document.dispatchEvent(new CustomEvent('glossary-close'))">✕</button></header>
+      <div class="gl-list" id="gl-list"></div>
+    </div>
+  </div>
+  <!-- ============================================================ RESULTS -->
+  <section class="page block reveal" id="experiments">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">008</span><h2>Results</h2><span class="sub">fair test at equal quality</span></div>
+        <p class="hint">Every scheme's strength was tuned <b>per image</b> until the watermarked picture had exactly <b>PSNR 40 dB</b>, then all
+          11 attacks were run. The <b>held-out</b> images were never used while designing the proposed scheme, so they are the honest test.</p>
+      </header>
+      <div class="results-grid" id="results-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ THEORY -->
+  <section class="page block reveal" id="theory">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">009</span><h2>Why it's better</h2><span class="sub">the theory</span></div>
+        <p class="hint">Single-transform schemes put each bit in <b>one</b> kind of coefficient, so the attack that destroys that coefficient
+          destroys the watermark. The proposed scheme uses <b>diversity</b> from communication theory: three carriers that fail under
+          different attacks, combined by a blind, reliability-weighted vote.</p>
+      </header>
+      <div class="theory" id="theory-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ JOURNEY -->
+  <section class="page block reveal" id="journey">
+    <div class="poster">
+      <header class="p-head">
+        <div class="p-title"><span class="num">010</span><h2>Problems → fixes</h2><span class="sub">how the design evolved</span></div>
+        <p class="hint">Every improvement came from a measured failure. Each card: <b>what went wrong</b>, <b>why</b>, <b>the fix</b>, and the
+          <b>before → after</b> number from the experiments.</p>
+      </header>
+      <div class="journey" id="journey-grid"></div>
+    </div>
+  </section>
+
+  <div class="tooltip" id="tooltip"></div>
+  <div class="toast" id="toast"></div>
+  <script type="module" src="js/main.js?v=13"></script>
+</body>
+</html>

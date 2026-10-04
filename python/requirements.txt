@@ -1,0 +1,8 @@
+numpy>=1.26
+pillow>=10.1
+matplotlib>=3.8
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+opencv-python>=4.9      # only for video_demo.py / webcam_live.py
+pytest>=8               # only for the tests
