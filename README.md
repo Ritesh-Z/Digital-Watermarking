@@ -135,6 +135,44 @@ python server.py
 
 ---
 
+## 🧪 Proposed Scheme & Base-Paper Reproduction (MATLAB)
+
+Toolbox-free MATLAB versions of the project's proposed watermarking scheme and of the base
+paper's hybrid DWT-DCT-SVD algorithm (see [`PROPOSED_SCHEME.md`](PROPOSED_SCHEME.md) for the full write-up).
+
+| File | Description |
+| :--- | :--- |
+| `main_demo_proposed.m` | Proposed blind triple-carrier scheme: embed, extract, 11 attacks |
+| `main_demo_hybrid_paper.m` | Base paper's hybrid DWT-DCT-SVD (Loke et al., IJES 2025) with its 6 attacks |
+| `main_security_test.m` | False-ownership test: classic SVD vs proposed |
+| `proposed_watermark_embed.m` / `proposed_watermark_extract.m` | Proposed scheme (DC QIM + low-pair QIM + mid-pair order, keyed, clip-aware, blind decoder, rotation re-sync) |
+| `hybrid_paper_embed.m` / `hybrid_paper_extract.m` | Base-paper reproduction (non-blind) |
+| `proposed_params.m` | Settings of the proposed scheme |
+| `wm_layout.m`, `wm_dither.m`, `wm_scramble.m`, `qim_embed.m`, `qim_embed_bounded.m`, `qim_soft.m` | Keyed spreading, dither, scrambling and QIM helpers |
+| `img_to_blocks.m`, `blocks_to_img.m`, `manual_dct_matrix.m` | Block and DCT helpers |
+| `manual_imrotate.m`, `manual_gaussian_blur.m`, `manual_sharpen.m` | Extra toolbox-free attacks |
+
+**Verified in MATLAB Online (R2026a)** on `cover.jpg` + `logo.png` (512×512):
+
+| Proposed scheme | |
+| :--- | :--- |
+| PSNR | 41.94 dB |
+| NC, no attack | 1.0000 |
+| JPEG Q80 / salt & pepper / median / sharpening / lines / crop 25 % | 1.0000 |
+| Gaussian noise / Gaussian blur / scale 0.5× | 0.9883 / 0.9980 / 0.9941 |
+| Rotation 2° | 1.0000 (blind re-sync found 2.00°) |
+| **Mean NC over 11 attacks** | **0.9982** |
+
+| Security test | Genuine | Decoy | Fake claim |
+| :--- | ---: | ---: | ---: |
+| Classic SVD | 1.000 | 0.669 | **0.996 ✗** |
+| Proposed | 1.000 | 0.035 | −0.031 ✓ |
+
+Base paper hybrid (HH band, α = 0.1): PSNR 42.31 dB; sharpening 0.999, lines 0.999, salt & pepper
+0.947, rotation 0.965, but **Gaussian blur −0.444** (watermark destroyed).
+
+---
+
 ## 📜 License
 
 
