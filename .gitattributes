@@ -1,0 +1,25 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Code and documentation files
+*.m text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Binary image assets (prevent corrupting image data during git conversions)
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.bmp binary
+*.tif binary
+*.tiff binary
+*.ico binary
+*.fig binary
+
+# Archives
+*.zip binary

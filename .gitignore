@@ -1,0 +1,141 @@
+# ==============================================================================
+# Git Ignore Configuration - Digital Watermarking MATLAB Project
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Security, Environment Files & API Keys (DO NOT COMMIT SECRETS)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+*.key
+*.pem
+*.cert
+*.crt
+*.pfx
+*.p12
+*.secret
+*.token
+credentials.json
+auth.json
+secrets.json
+id_rsa*
+*_rsa*
+
+# ------------------------------------------------------------------------------
+# Dependency Directories & Web Package Managers
+# ------------------------------------------------------------------------------
+node_modules/
+.npm/
+.yarn/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# ------------------------------------------------------------------------------
+# Python & Virtual Environments (if hybrid scripts/tools are added)
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+
+# ------------------------------------------------------------------------------
+# MATLAB Artifacts, Caches & Autosaves
+# ------------------------------------------------------------------------------
+# Autosave files
+*.asv
+*.m~
+*.bak
+*.fig.bak
+
+# Simulink / Stateflow generation and cache
+slprj/
+sfprj/
+*.slxc
+*.mdl~
+
+# MEX compiled binaries (platform-specific binaries)
+*.mex*
+*.mexw32
+*.mexw64
+*.mexa64
+*.mexmaci64
+
+# Code generation & deploytool output
+codegen/
+Distribution/
+*.mlappinstall
+
+# Pre-compiled MATLAB p-code files
+*.p
+
+# Profiler, workspace dumps and runtime logs
+matlab.log
+octave-core
+octave-workspace
+
+# Local MATLAB preferences / desktop layout
+.matlab/
+
+# ------------------------------------------------------------------------------
+# Project Output Artifacts & Experiment Results
+# Keep README.txt and placeholder, ignore generated output images & data dumps
+# ------------------------------------------------------------------------------
+results/*.png
+results/*.jpg
+results/*.jpeg
+results/*.bmp
+results/*.tif
+results/*.tiff
+results/*.mat
+results/*.csv
+results/*.xlsx
+!results/README.txt
+
+# ------------------------------------------------------------------------------
+# Archives & Compressed Backups
+# ------------------------------------------------------------------------------
+*.zip
+*.tar
+*.gz
+*.tgz
+*.rar
+*.7z
+
+# ------------------------------------------------------------------------------
+# Operating System Files
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# ------------------------------------------------------------------------------
+# IDE & Editor Configurations
+# ------------------------------------------------------------------------------
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+.history/
+.gemini/
