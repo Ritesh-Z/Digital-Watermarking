@@ -20,4 +20,4 @@ jobs:
       - name: Run Syntax and Self-Test
         uses: matlab-actions/run-command@v2
         with:
-          command: "addpath(genpath(pwd)); res = runPipeline(imread('images/cover.jpg'), imread('images/logo.png'), 'gaussian'); disp(res.metrics);"
+          command: "addpath(genpath(pwd)); cover = prepareCoverImage(loadImageFile('images/cover.jpg'), 128); W = prepareWatermarkLogo(loadImageFile('images/logo.png'), 16); emb = embedAllStages(cover, W); res = attackAndExtract(emb, 'gaussian'); disp(table(res.stageNames', res.alphas', res.psnr', res.ncc', 'VariableNames', {'Stage', 'Alpha', 'PSNR', 'NC_gaussian'}));"
